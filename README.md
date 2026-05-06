@@ -2,6 +2,8 @@
 
 This project builds and compares machine learning classification models for a bank marketing term deposit dataset. The goal is to predict whether a customer will subscribe to a term deposit using prepared feature and target CSV files.
 
+It also includes basic data preprocessing and exploratory data analysis (EDA), including class distribution, selected feature relationships, a correlation heatmap, and an outlier boxplot.
+
 ## Project Structure
 
 ```text
@@ -10,6 +12,8 @@ bank_term_deposit_project/
 │   ├── X_bank.csv
 │   ├── y_bank.csv
 │   └── bank_cleaned.csv
+├── notebooks/
+│   └── CMPE255GroupProject.ipynb   # data preprocessing pipeline
 ├── src/
 │   └── modeling.py
 ├── outputs/
@@ -62,7 +66,16 @@ Create and activate a virtual environment:
 
 ```bash
 python3 -m venv .venv
+```
+
+macOS / Linux:
+```bash
 source .venv/bin/activate
+```
+
+Windows:
+```bash
+.venv\Scripts\Activate.ps1
 ```
 
 Install the required packages:

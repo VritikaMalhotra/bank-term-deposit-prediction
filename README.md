@@ -1,23 +1,56 @@
-# Bank Term Deposit Classification
+# Bank Term Deposit Prediction
 
-This project builds and compares machine learning classification models for a bank marketing term deposit dataset. The goal is to predict whether a customer will subscribe to a term deposit using prepared feature and target CSV files.
+A machine learning project that predicts whether a bank customer will subscribe to a term deposit, based on the UCI Bank Marketing dataset. Four classifiers are trained, evaluated, and compared using standard classification metrics.
 
-It also includes basic data preprocessing and exploratory data analysis (EDA), including class distribution, selected feature relationships, a correlation heatmap, and an outlier boxplot.
+## Overview
+
+- **Task:** Binary classification (subscribed: yes / no)
+- **Dataset:** Preprocessed bank marketing data (`data/X_bank.csv`, `data/y_bank.csv`)
+- **Split:** 80% train / 20% test (stratified)
+- **Models:** Logistic Regression, Decision Tree, Random Forest, XGBoost
+
+## Results
+
+| Model               | Accuracy | Precision | Recall | F1-Score |
+|---------------------|----------|-----------|--------|----------|
+| Logistic Regression | 0.9002   | 0.6660    | 0.2958 | 0.4097   |
+| Decision Tree       | 0.8573   | 0.3961    | 0.4178 | 0.4066   |
+| Random Forest       | 0.8966   | 0.6062    | 0.3318 | 0.4288   |
+| XGBoost             | **0.9031**   | **0.6602**    | 0.3544 | **0.4613**   |
+
+### ROC Curves
+
+![ROC Curves](outputs/roc_curves.png)
+
+### Model Metric Comparison
+
+![Model Metric Comparison](outputs/model_comparison_styled.png)
+
+### Class Distribution
+
+![Class Distribution](outputs/class_distribution.png)
+
+### Precision vs Recall
+
+![Precision Recall Scatter](outputs/precision_recall_scatter.png)
+
+### Random Forest — Top 10 Feature Importances
+
+![Feature Importance](outputs/random_forest_top_10_feature_importance.png)
 
 ## Project Structure
 
 ```text
 bank_term_deposit_project/
 ├── data/
-│   ├── X_bank.csv
-│   ├── y_bank.csv
-│   └── bank_cleaned.csv
+│   ├── X_bank.csv              # feature matrix
+│   ├── y_bank.csv              # target labels
+│   └── bank_cleaned.csv        # cleaned raw data
 ├── notebooks/
-│   └── CMPE255GroupProject.ipynb   # data preprocessing pipeline
+│   └── CMPE255GroupProject.ipynb   # data preprocessing and EDA
 ├── src/
-│   └── modeling.py
-├── outputs/
-│   └── generated model results and plots
+│   └── modeling.py             # model training, evaluation, and plots
+├── outputs/                    # generated plots and results
 ├── slides_notes/
 │   ├── Plans.docx
 │   └── EDA.docx
@@ -25,44 +58,7 @@ bank_term_deposit_project/
 └── README.md
 ```
 
-## Models
-
-The modeling script trains and evaluates four classifiers:
-
-- Logistic Regression
-- Decision Tree
-- Random Forest
-- XGBoost
-
-## Evaluation Metrics
-
-Each model is evaluated using:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Confusion matrix
-- ROC curve and AUC
-
-## Outputs
-
-Running the script creates an `outputs/` folder and saves:
-
-- `model_comparison.csv`
-- `logistic_regression_confusion_matrix.png`
-- `decision_tree_confusion_matrix.png`
-- `random_forest_confusion_matrix.png`
-- `xgboost_confusion_matrix.png`
-- `model_metric_comparison.png`
-- `roc_curves.png`
-- `random_forest_top_10_feature_importance.png`
-
-The `outputs/` folder is ignored by git because these files are generated artifacts.
-
 ## Setup
-
-Create and activate a virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -78,33 +74,15 @@ Windows:
 .venv\Scripts\Activate.ps1
 ```
 
-Install the required packages:
-
+Install dependencies:
 ```bash
 pip install pandas matplotlib scipy scikit-learn xgboost
 ```
 
-## Run the Project
-
-From the project root, run:
+## Run
 
 ```bash
 python src/modeling.py
 ```
 
-If using the project virtual environment directly:
-
-```bash
-.venv/bin/python src/modeling.py
-```
-
-The script prints model metrics in the terminal and saves the comparison table and plots to `outputs/`.
-
-## Data
-
-The script expects these files:
-
-- `data/X_bank.csv`: feature matrix
-- `data/y_bank.csv`: target labels
-
-The train/test split is stratified, with 80% of the data used for training and 20% used for testing.
+Prints metrics to the terminal and saves all plots and the comparison CSV to `outputs/`.

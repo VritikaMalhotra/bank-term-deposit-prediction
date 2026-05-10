@@ -81,7 +81,7 @@ Windows:
 Install the required packages:
 
 ```bash
-pip install pandas matplotlib scikit-learn xgboost
+pip install pandas matplotlib scipy scikit-learn xgboost
 ```
 
 ## Run the Project

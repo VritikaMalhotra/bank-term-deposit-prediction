@@ -7,7 +7,10 @@ os.environ.setdefault("MPLCONFIGDIR", str(cache_dir / "matplotlib"))
 os.environ.setdefault("XDG_CACHE_HOME", str(cache_dir))
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from scipy.interpolate import PchipInterpolator
+from scipy.ndimage import gaussian_filter1d
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -147,6 +150,22 @@ def save_metric_comparison_plot(comparison_table, output_dir):
     return output_path
 
 
+def smooth_roc_points(false_positive_rate, true_positive_rate, points=1000):
+    """Return presentation-friendly ROC points without changing AUC calculation."""
+    unique_fpr, first_index = np.unique(false_positive_rate, return_index=True)
+    unique_tpr = np.maximum.reduceat(true_positive_rate, first_index)
+
+    if len(unique_fpr) < 3:
+        return false_positive_rate, true_positive_rate
+
+    smooth_fpr = np.linspace(0, 1, points)
+    smooth_tpr = PchipInterpolator(unique_fpr, unique_tpr)(smooth_fpr)
+    smooth_tpr = gaussian_filter1d(smooth_tpr, sigma=8)
+    smooth_tpr = np.clip(np.maximum.accumulate(smooth_tpr), 0, 1)
+
+    return smooth_fpr, smooth_tpr
+
+
 def save_roc_curve_plot(model_outputs, y_test, output_dir):
     plt.figure(figsize=(8, 6))
 
@@ -154,18 +173,36 @@ def save_roc_curve_plot(model_outputs, y_test, output_dir):
         false_positive_rate, true_positive_rate, _ = roc_curve(
             y_test,
             output["probabilities"],
+            drop_intermediate=False,
         )
         roc_auc = auc(false_positive_rate, true_positive_rate)
-        plt.plot(
+        smooth_fpr, smooth_tpr = smooth_roc_points(
             false_positive_rate,
             true_positive_rate,
+        )
+        plt.plot(
+            smooth_fpr,
+            smooth_tpr,
+            linewidth=2.3,
+            solid_capstyle="round",
+            solid_joinstyle="round",
             label=f"{model_name} (AUC = {roc_auc:.4f})",
         )
 
-    plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Random")
+    plt.plot(
+        [0, 1],
+        [0, 1],
+        linestyle="--",
+        color="gray",
+        linewidth=1.5,
+        label="Random",
+    )
     plt.title("ROC Curves")
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.grid(alpha=0.25)
     plt.legend(loc="lower right")
     plt.tight_layout()
 
